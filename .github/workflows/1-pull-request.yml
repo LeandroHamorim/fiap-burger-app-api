@@ -20,7 +20,8 @@ jobs:
             exit 1
           fi
       - name: Checar repositório
-        uses: actions/checkout@v4
+        uses: actions/checkout@v3
+                - run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
 
       - name: Validar sintaxe Terraform
         run: terraform validate
@@ -35,7 +36,7 @@ jobs:
       - name: Criar Pull Request
         uses: peter-evans/create-pull-request@v6
         with:
-#          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.GITHUB_TOKEN }}
           commit-message: "Criação automatizada de pull request"
           title: "Validação de branch bem-sucedida"
           body: "Esta solicitação pull request foi criada automaticamente após a validação da feature branch."
