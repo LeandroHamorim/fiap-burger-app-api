@@ -26,6 +26,7 @@ jobs:
 
   pull-request:
     needs: validar
+    runs-on: ubuntu-latest
     steps:
       - name: Criar Pull Request
         uses: peter-evans/create-pull-request@v5
