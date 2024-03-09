@@ -25,6 +25,7 @@ jobs:
         run: terraform validate
 
   pull-request:
+    needs: validar
     steps:
       - name: Criar Pull Request
         uses: peter-evans/create-pull-request@v5
