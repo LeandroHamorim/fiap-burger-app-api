@@ -1,0 +1,35 @@
+name: '1 - [feat] Build & Pull Request'
+
+on:
+  push:
+    branches:
+      - 'feature**'
+
+jobs:
+  validar:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checar o nome da branch'
+        run: |
+          if [[ ! ${{ github.ref }} =~ ^refs/heads/feature/ ]]; then
+            echo "O nome da branch não começa com 'feature/'. Use um nome de branch válido."
+            exit 1
+          fi
+      - name: Checar repositório
+        uses: actions/checkout@v2
+
+      - name: Validar sintaxe Terraform
+        run: terraform validate
+
+  pull-request:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Criar Pull Request
+        uses: peter-evans/create-pull-request@v3
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: "Criação automatizada de pull request"
+          title: "Validação de branch bem-sucedida"
+          body: "Esta solicitação pull request foi criada automaticamente após a validação da feature branch."
+          branch: main
+          base: main
