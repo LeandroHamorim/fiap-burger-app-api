@@ -4,12 +4,14 @@ on:
   push:
     branches:
       - 'feature**'
-permissions:
-    contents: read
+
 
 jobs:
   validar:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
     steps:
       - name: Checar o nome da branch'
         run: |
@@ -26,11 +28,14 @@ jobs:
   pull-request:
     needs: validar
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
     steps:
       - name: Criar Pull Request
         uses: peter-evans/create-pull-request@v6
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+#          token: ${{ secrets.GITHUB_TOKEN }}
           commit-message: "Criação automatizada de pull request"
           title: "Validação de branch bem-sucedida"
           body: "Esta solicitação pull request foi criada automaticamente após a validação da feature branch."
