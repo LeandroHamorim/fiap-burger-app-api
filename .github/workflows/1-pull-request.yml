@@ -4,14 +4,11 @@ on:
   push:
     branches:
       - 'feature**'
-
-
+permissions:
+  contents: read
 jobs:
   validar:
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
-      pull-requests: write
     steps:
       - name: Checar o nome da branch'
         run: |
@@ -20,17 +17,14 @@ jobs:
             exit 1
           fi
       - name: Checar repositório
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
+        with:
+          path: 'src'
 
       - name: Validar sintaxe Terraform
         run: terraform validate
 
   pull-request:
-    needs: validar
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write
-      pull-requests: write
     steps:
       - name: Criar Pull Request
         uses: peter-evans/create-pull-request@v5
