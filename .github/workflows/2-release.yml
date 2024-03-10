@@ -20,7 +20,8 @@ jobs:
           terraform_version: 1.0.0
 
       - name: Terraform Init
-        run: terraform init
+        run: terraform init 
+        working-directory: ./src
 
       - name: Terraform Plan
         run: terraform plan
@@ -29,6 +30,7 @@ jobs:
       - name: Terraform Apply
         if: github.event_name == 'pull_request' && github.event.action == 'closed' && github.event.pull_request.merged == true
         run: terraform apply -auto-approve
+        working-directory: ./src
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
