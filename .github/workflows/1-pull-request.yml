@@ -3,14 +3,14 @@ name: '1 - [feat] Build & Pull Request'
 on:
   push:
     branches:
-      - 'feature**'
+      - 'feature*'
 permissions:
   contents: read
 jobs:
   validar:
     runs-on: ubuntu-latest
     steps:
-      - name: Checar o nome da branch'
+      - name: Checar o nome da branch
         run: |
           if [[ ! ${{ github.ref }} =~ ^refs/heads/feature/ ]]; then
             echo "O nome da branch não começa com 'feature/'. Use um nome de branch válido."
@@ -19,15 +19,24 @@ jobs:
       - name: Checar repositório
         uses: actions/checkout@v4
 
-      - name: Validar sintaxe Terraform
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v1
+        with:
+          terraform_version: 1.0.0
+
+      - name: Valida sintaxe do terraform
         run: terraform validate
 
-      - name: Criar Pull Request
+      - name: Criar Pull request
         uses: peter-evans/create-pull-request@v6
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           commit-message: "Criação automatizada de pull request"
-          title: "Validação de branch bem-sucedida"
-          body: "Esta solicitação pull request foi criada automaticamente após a validação da feature branch."
-          branch: main
-          base: main
+          title: "Merge Feature: ${GITHUB_REF#refs/heads/}" # Dinamicamente atribui o nome da branch de feature ao título
+          body: |
+            ## Descrição
+            Esta solicitação de pull request foi criada automaticamente após a validação bem-sucedida da branch de feature.
+            
+            Por favor, revise as mudanças antes de mesclar.
+          branch: ${{ github.head_ref }} # Usa a branch atual como base para o PR
+          base: main # Destino do PR
