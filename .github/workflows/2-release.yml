@@ -24,6 +24,7 @@ jobs:
 
       - name: Terraform Plan
         run: terraform plan
+        working-directory: ./src
 
       - name: Terraform Apply
         if: github.event_name == 'pull_request' && github.event.action == 'closed' && github.event.pull_request.merged == true
