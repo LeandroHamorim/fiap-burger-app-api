@@ -3,9 +3,8 @@ name: '1 - [feat] Build & Pull Request'
 on:
   push:
     branches:
-      - 'feature**'
-permissions:
-  contents: read
+      - 'feature/**' # Corrigido para correspondência de todas as branches que começam com 'feature/'
+
 jobs:
   validar:
     runs-on: ubuntu-latest
