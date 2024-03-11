@@ -28,7 +28,7 @@ jobs:
         run: terraform validate
 
   pull_request:
-    needs: build
+    needs: validar
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
