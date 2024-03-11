@@ -37,5 +37,5 @@ jobs:
             Esta solicitação de pull request foi criada automaticamente após a validação bem-sucedida da branch de feature.
             
             Por favor, revise as mudanças antes de mesclar.
-          branch: ${{ github.head_ref }} # Usa a branch atual como base para o PR
-          base: main # Destino do PR
+          branch: ${{ github.head_ref }}
+          base: 'main'
