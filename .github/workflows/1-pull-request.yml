@@ -3,7 +3,7 @@ name: '1 - [feat] Build & Pull Request'
 on:
   push:
     branches:
-      - 'feature/**' # Corrigido para correspondência de todas as branches que começam com 'feature/'
+      - 'feature/**'
 
 jobs:
   validar:
@@ -26,20 +26,16 @@ jobs:
       - name: Valida sintaxe do terraform
         run: terraform validate
 
-      - name: Console log de github.head_ref
-        shell: bash
-        run: echo "branch=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}" >> $GITHUB_OUTPUT
-
-      - name: Criar Pull request
-        if: github.head_ref != ''
-        uses: peter-evans/create-pull-request@v6
+      - name: Solicitar Revisão de Código
+        uses: actions/request-reviews@v2
         with:
+          # reviewers: username1, username2
+          num-reviewers: 1
           token: ${{ secrets.GITHUB_TOKEN }}
-          commit-message: "Criação automatizada de pull request"
-          title: "Merge Feature: ${GITHUB_REF#refs/heads/}" # Dinamicamente atribui o nome da branch de feature ao título
-          body: |
-            ## Descrição
-            Esta solicitação de pull request foi criada automaticamente após a validação bem-sucedida da branch de feature.
-            
-            Por favor, revise as mudanças antes de mesclar.
-          base: main # Destino do PR
+
+      - name: Merge com a main
+        if: github.event_name == 'pull_request_review' && github.event.action == 'submitted' && github.event.review.state == 'approved'
+        uses: pullreminders/merge-me-action@v3
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          merge_method: squash
