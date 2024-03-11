@@ -15,8 +15,9 @@ jobs:
             echo "O nome da branch não começa com 'feature/'. Use um nome de branch válido."
             exit 1
           fi
+
       - name: Checar repositório
-        uses: actions/checkout@v4
+        uses: actions/checkout@v2
 
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v1
@@ -26,16 +27,12 @@ jobs:
       - name: Valida sintaxe do terraform
         run: terraform validate
 
-      - name: Solicitar Revisão de Código
-        uses: actions/request-reviews@v2
-        with:
-          # reviewers: username1, username2
-          num-reviewers: 1
-          token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Solicitar revisão
+        run: |
+          echo "This pull request needs a review to be merged." > review.md
+          gh pr review --body "$(cat review.md)" --approve
 
       - name: Merge com a main
         if: github.event_name == 'pull_request_review' && github.event.action == 'submitted' && github.event.review.state == 'approved'
-        uses: pullreminders/merge-me-action@v3
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          merge_method: squash
+        run: |
+          gh pr merge --auto --merge --delete-branch
