@@ -26,7 +26,12 @@ jobs:
       - name: Valida sintaxe do terraform
         run: terraform validate
 
+      - name: Console log de github.head_ref
+        shell: bash
+        run: echo "branch=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}" >> $GITHUB_OUTPUT
+
       - name: Criar Pull request
+        if: github.head_ref != ''
         uses: peter-evans/create-pull-request@v6
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
@@ -37,5 +42,5 @@ jobs:
             Esta solicitação de pull request foi criada automaticamente após a validação bem-sucedida da branch de feature.
             
             Por favor, revise as mudanças antes de mesclar.
-          branch: ${{ github.head_ref }}
-          base: 'main'
+          branch: ${{ GITHUB_HEAD_REF }} # Usa a branch atual como base para o PR
+          base: main # Destino do PR
