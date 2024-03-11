@@ -27,6 +27,12 @@ jobs:
       - name: Valida sintaxe do terraform
         run: terraform validate
 
+  pull_request:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
       - name: Solicitar revisão
         run: |
           echo "This pull request needs a review to be merged." > review.md
