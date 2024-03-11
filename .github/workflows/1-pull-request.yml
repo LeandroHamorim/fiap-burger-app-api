@@ -34,6 +34,12 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
+      - name: Set up GitHub CLI
+        uses: actions/checkout@v2
+
+      - name: Configure GitHub CLI
+        run: gh config set -h github.com oauth-token ${{ secrets.GITHUB_TOKEN }}
+
       - name: Solicitar revisão
         run: |
           echo "This pull request needs a review to be merged." > review.md
@@ -43,3 +49,5 @@ jobs:
         if: github.event_name == 'pull_request_review' && github.event.action == 'submitted' && github.event.review.state == 'approved'
         run: |
           gh pr merge --auto --merge --delete-branch
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
