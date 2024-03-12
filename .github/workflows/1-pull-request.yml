@@ -47,5 +47,5 @@ jobs:
             Esta solicitação de pull request foi criada automaticamente após a validação bem-sucedida da branch de feature.
             
             Por favor, revise as mudanças antes de mesclar.
-          base: main # Destino do PR
+          base: main
           branch: ${{ steps.extract_branch.outputs.branch_name }}
