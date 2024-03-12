@@ -1,4 +1,4 @@
-name: '1 - [feat] Build & Pull Request'
+name: Feature Branch Workflow
 
 on:
   push:
@@ -6,48 +6,25 @@ on:
       - 'feature/**'
 
 jobs:
-  validar:
+  build:
     runs-on: ubuntu-latest
-    steps:
-      - name: Checar o nome da branch
-        run: |
-          if [[ ! ${{ github.ref }} =~ ^refs/heads/feature/ ]]; then
-            echo "O nome da branch não começa com 'feature/'. Use um nome de branch válido."
-            exit 1
-          fi
 
-      - name: Checar repositório
-        uses: actions/checkout@v2
-
-      - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v1
-        with:
-          terraform_version: 1.0.0
-
-      - name: Valida sintaxe do terraform
-        run: terraform validate
-
-  pull_request:
-    needs: validar
-    runs-on: ubuntu-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Set up GitHub CLI
-        uses: actions/checkout@v2
-
-      - name: Configure GitHub CLI
-        run: gh config set -h github.com oauth-token ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Solicitar revisão
+      - name: Run tests (replace with your validation steps)
         run: |
-          echo "This pull request needs a review to be merged." > review.md
-          gh pr review --body "$(cat review.md)" --approve
+          # Coloque aqui os comandos para validar a feature
 
-      - name: Merge com a main
-        if: github.event_name == 'pull_request_review' && github.event.action == 'submitted' && github.event.review.state == 'approved'
-        run: |
-          gh pr merge --auto --merge --delete-branch
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v3
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: "Automatically created Pull Request"
+          branch: main
+          title: "Automatically created Pull Request"
+          body: |
+            This is an automatically created Pull Request from feature branch.
+
+          base: main
