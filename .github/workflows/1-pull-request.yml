@@ -3,7 +3,7 @@ name: '1 - [feat] Build & Pull Request'
 on:
   push:
     branches:
-      - 'feature/**' # Corrigido para correspondência de todas as branches que começam com 'feature/'
+      - 'feature/**'
 
 permissions: write-all
 
@@ -34,14 +34,14 @@ jobs:
 
       - name: Extract branch name
         id: extract_branch
-        run: echo "::set-output name=branch_name::${{ github.head_ref }}"
+        run: echo "::set-output name=branch_name::$(echo ${GITHUB_REF#refs/heads/})"
 
       - name: Criar Pull request
         uses: peter-evans/create-pull-request@v6
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           commit-message: "Criação automatizada de pull request"
-          title: "Merge Feature: ${{ github.head_ref }}" # Dinamicamente atribui o nome da branch de feature ao título
+          title: "Merge Feature: ${GITHUB_REF#refs/heads/}"
           body: |
             ## Descrição
             Esta solicitação de pull request foi criada automaticamente após a validação bem-sucedida da branch de feature.
