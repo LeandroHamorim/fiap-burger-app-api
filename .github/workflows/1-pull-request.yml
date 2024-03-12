@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - 'feature/**'
+  pull_request:
 
 permissions: write-all
 
@@ -36,16 +37,38 @@ jobs:
         id: extract_branch
         run: echo "::set-output name=branch_name::$(echo ${GITHUB_REF#refs/heads/})"
 
-      - name: Criar Pull request
-        uses: peter-evans/create-pull-request@v6
+      - name: Terraform Plan
+        id: plan
+        if: github.event_name == 'pull_request'
+        run: terraform plan -no-color -input=false
+        continue-on-error: true
+
+      - name: Update Pull Request
+        uses: actions/github-script@v6
+        if: github.event_name == 'pull_request'
+        env:
+          PLAN: ${{ steps.plan.outputs.stdout }}
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          commit-message: "Criação automatizada de pull request"
-          title: "Merge Feature: ${GITHUB_REF#refs/heads/}"
-          body: |
-            ## Descrição
-            Esta solicitação de pull request foi criada automaticamente após a validação bem-sucedida da branch de feature.
-            
-            Por favor, revise as mudanças antes de mesclar.
-          base: main
-          branch: ${{ steps.extract_branch.outputs.branch_name }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const output = `#### Terraform Format and Style 🖌\`${{ steps.fmt.outcome }}\`
+            #### Terraform Initialization ⚙️\`${{ steps.init.outcome }}\`
+            #### Terraform Validation 🤖\`${{ steps.validate.outcome }}\`
+            #### Terraform Plan 📖\`${{ steps.plan.outcome }}\`
+
+            <details><summary>Show Plan</summary>
+
+            \`\`\`terraform\n
+            ${process.env.PLAN}
+            \`\`\`
+
+            </details>
+
+            *Pushed by: @${{ github.actor }}, Action: \`${{ github.event_name }}\`*`;
+
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: output
+            })
