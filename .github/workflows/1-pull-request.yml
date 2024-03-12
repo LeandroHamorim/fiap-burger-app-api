@@ -5,7 +5,7 @@ on:
   push:
     branches:
       - 'feature/**' # Corrigido para correspondência de todas as branches que começam com 'feature/'
-
+permissions: write-all
 jobs:
   validar:
     runs-on: ubuntu-latest
