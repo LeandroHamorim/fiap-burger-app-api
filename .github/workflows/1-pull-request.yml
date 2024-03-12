@@ -17,14 +17,18 @@ jobs:
         run: |
           # Coloque aqui os comandos para validar a feature
 
+      - name: Extract branch name
+        id: extract_branch
+        run: echo "::set-output name=branch_name::$(echo ${GITHUB_REF#refs/heads/})"
+
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v3
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           commit-message: "Automatically created Pull Request"
-          branch: main
           title: "Automatically created Pull Request"
           body: |
             This is an automatically created Pull Request from feature branch.
 
           base: main
+          branch: ${{ steps.extract_branch.outputs.branch_name }}
