@@ -5,13 +5,26 @@ on:
     branches:
       - 'feature/**'
 
+permissions:
+  contents: read
+
 jobs:
-  build:
+  validar:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
+
+      - name: Checar o nome da branch'
+        run: |
+          if [[ ! ${{ github.ref }} =~ ^refs/heads/feature/ ]]; then
+            echo "O nome da branch não começa com 'feature/'. Use um nome de branch válido."
+            exit 1
+          fi
+      - name: Checar repositório
+        uses: actions/checkout@v4
+
+      - name: Validar sintaxe Terraform
+        run: terraform validate
 
       - name: Run tests (replace with your validation steps)
         run: |
@@ -25,10 +38,8 @@ jobs:
         uses: peter-evans/create-pull-request@v3
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          commit-message: "Automatically created Pull Request"
-          title: "Automatically created Pull Request"
-          body: |
-            This is an automatically created Pull Request from feature branch.
-
-          base: main
+          commit-message: "Criação automatizada de pull request"
+          title: "Validação de branch bem-sucedida"
+          body: "Esta solicitação pull request foi criada automaticamente após a validação da feature branch."
           branch: ${{ steps.extract_branch.outputs.branch_name }}
+          base: main
