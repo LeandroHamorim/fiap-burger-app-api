@@ -4,78 +4,24 @@ on:
   push:
     branches:
       - 'feature/**'
-
 permissions: write-all
 
 jobs:
-  validar:
+  build:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Checar o nome da branch
-        run: |
-          if [[ ! ${{ github.ref }} =~ ^refs/heads/feature/ ]]; then
-            echo "O nome da branch não começa com 'feature/'. Use um nome de branch válido."
-            exit 1
-          fi
+      - name: Checkout do código
+        uses: actions/checkout@v2
 
-      - name: Checar repositório
-        uses: actions/checkout@v4
 
-      - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v1
+      # No final da esteira, abra um pull request para a branch main
+      - name: Abrir pull request para main
+        uses: peter-evans/create-pull-request@v3
         with:
-          terraform_version: 1.0.0
-
-      - name: Valida sintaxe do terraform
-        run: terraform validate
-
-      - name: Console log de github.head_ref
-        run: echo "branch=${{ github.head_ref }}" >> $GITHUB_OUTPUT
-
-      - name: Extract branch name
-        id: extract_branch
-        run: echo "::set-output name=branch_name::$(echo ${GITHUB_REF#refs/heads/})"
-
-      - name: Terraform Plan
-        id: plan
-        if: github.event_name == 'pull_request'
-        run: terraform plan -no-color -input=false
-        continue-on-error: true
-
-      - name: Update Pull Request
-        uses: actions/github-script@v6
-        if: github.event_name == 'pull_request'
-        env:
-          PLAN: ${{ steps.plan.outputs.stdout }}
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          script: |
-            const output = `#### Terraform Format and Style 🖌\`${{ steps.fmt.outcome }}\`
-            #### Terraform Initialization ⚙️\`${{ steps.init.outcome }}\`
-            #### Terraform Validation 🤖\`${{ steps.validate.outcome }}\`
-            #### Terraform Plan 📖\`${{ steps.plan.outcome }}\`
-
-            <details><summary>Show Plan</summary>
-
-            \`\`\`terraform\n
-            ${process.env.PLAN}
-            \`\`\`
-
-            </details>
-
-            *Pushed by: @${{ github.actor }}, Action: \`${{ github.event_name }}\`*`;
-
-            github.rest.issues.createComment({
-              issue_number: context.issue.number,
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              body: output
-            })
-
-      - name: Terraform Plan Status
-        if: steps.plan.outcome == 'failure'
-        run: exit 1
-
-      - name: Terraform Apply
-        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-        run: terraform apply -auto-approve -input=false
+          token: ${{ secrets.GITHUB_TOKEN }}
+          branch: main
+          title: "Merge da feature para main"
+          body: |
+            Este pull request foi automaticamente gerado pelo GitHub Actions.
+            Por favor, revise as mudanças e faça o merge se estiverem corretas.
