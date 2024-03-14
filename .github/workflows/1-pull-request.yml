@@ -33,6 +33,10 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           delete-branch: true
 
+      - name: PR url
+        run: |
+          echo "Pull Request URL - ${{ steps.cpr.outputs.pull-request-url }}"
+
       - name: Approve Pull Request
         uses: juliangruber/approve-pull-request-action@v2
         with:
