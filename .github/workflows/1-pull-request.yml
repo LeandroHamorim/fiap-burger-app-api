@@ -21,7 +21,7 @@ jobs:
 
       - name: Raise PR
         id: demo-1
-        uses: peter-evans/create-pull-request@v6
+        uses: peter-evans/create-pull-request@v3
         with:
           branch: "auto-pr-branch-2"
           base: main
