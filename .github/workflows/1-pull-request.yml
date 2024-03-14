@@ -46,4 +46,3 @@ jobs:
           number: ${{ steps.demo-1.outputs.pull-request-number }}
           method: squash
           repo: juliangruber/octokit-action
-
