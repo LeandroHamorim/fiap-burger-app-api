@@ -20,7 +20,7 @@ jobs:
         run: echo ${{ env.GIT_COMMIT_AUTHOR_NAME }} > AUTHOR
 
       - name: Raise PR
-        id: demo-1
+        id: demo
         uses: peter-evans/create-pull-request@v3
         with:
           branch: "auto-pr-branch-2"
@@ -37,12 +37,12 @@ jobs:
         uses: juliangruber/approve-pull-request-action@v2
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          number: ${{ steps.demo-1.outputs.pull-request-number }}
+          number: ${{ steps.demo.outputs.pull_request_number }}
 
       - name: Merge Pull Request
         uses: juliangruber/merge-pull-request-action@v1
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          number: ${{ steps.demo-1.outputs.pull-request-number }}
+          number: ${{ steps.demo.outputs.pull_request_number }}
           method: squash
           repo: juliangruber/octokit-action
