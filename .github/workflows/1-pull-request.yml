@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - main
-permissions: write-all
 
 jobs:
   updateAuthor:
@@ -30,7 +29,7 @@ jobs:
           author: ${{ env.GIT_COMMIT_AUTHOR_NAME }} <${{ env.GIT_COMMIT_AUTHOR_EMAIL }}">
           body:
             This is to show automatic PR creation
-          token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+          token: ${{ secrets.GITHUB_TOKEN }}
           delete-branch: true
 
       - name: Approve Pull Request
@@ -42,6 +41,6 @@ jobs:
       - name: Merge Pull request
         uses: juliangruber/merge-pull-request-action@v1
         with:
-          github-token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
           number: ${{ steps.demo-1.outputs.pull-request-number }}
           method: squash
