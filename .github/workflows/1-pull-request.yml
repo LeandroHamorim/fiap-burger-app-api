@@ -5,6 +5,7 @@ on:
     branches:
       - main
 
+
 jobs:
   updateAuthor:
     runs-on: ubuntu-latest
@@ -45,3 +46,4 @@ jobs:
           number: 1
           method: squash
           repo: juliangruber/octokit-action
+
