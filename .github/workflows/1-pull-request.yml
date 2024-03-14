@@ -38,10 +38,12 @@ jobs:
           echo "Pull Request URL - ${{ steps.cpr.outputs.pull-request-url }}"
 
       - name: Approve Pull Request
-        uses: juliangruber/approve-pull-request-action@v2
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          number: ${{ steps.demo.outputs.pull_request_number }}
+        run: |
+          pr_url=$(echo "${{ steps.demo.outputs.pull-request-url }}")
+          pr_number=$(echo "$pr_url" | cut -d'/' -f7)
+          gh pr review --approve $pr_number
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Merge Pull Request
         uses: juliangruber/merge-pull-request-action@v1
