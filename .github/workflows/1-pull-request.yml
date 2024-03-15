@@ -22,12 +22,12 @@ jobs:
         id: demo
         uses: peter-evans/create-pull-request@v6
         with:
-          branch: ${{ github.ref }}
+          branch: ${{ github.head_ref }}  # Utilize github.head_ref para referenciar a branch da feature
           base: main
-          title: "PR AUTOMATICO "
-          committer: ${{ env.GIT_COMMIT_AUTHOR_NAME }} <${{ env.GIT_COMMIT_AUTHOR_EMAIL }}">
-          author: ${{ env.GIT_COMMIT_AUTHOR_NAME }} <${{ env.GIT_COMMIT_AUTHOR_EMAIL }}">
-          body:
+          title: "PR AUTOMATICO"
+          committer: ${{ env.GIT_COMMIT_AUTHOR_NAME }} <${{ env.GIT_COMMIT_AUTHOR_EMAIL }}>
+          author: ${{ env.GIT_COMMIT_AUTHOR_NAME }} <${{ env.GIT_COMMIT_AUTHOR_EMAIL }}>
+          body: |
             This is to show automatic PR creation
           token: ${{ secrets.GITHUB_TOKEN }}
           delete-branch: false
@@ -38,8 +38,8 @@ jobs:
 
       - name: Show diff after PR
         run: |
-          git fetch origin ${{ github.ref }}:${{ github.ref }}
-          git diff main ${{ github.ref }}
+          git fetch origin ${{ github.head_ref }}:${{ github.head_ref }}
+          git diff main ${{ github.head_ref }}
 
 #      - name: Approve Pull Request
 #        run: |
