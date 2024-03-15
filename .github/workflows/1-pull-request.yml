@@ -19,10 +19,10 @@ jobs:
         run: echo ${{ env.GIT_COMMIT_AUTHOR_NAME }} > AUTHOR
 
       - name: Raise PR
-        id: demo
+        id: create_pr
         uses: peter-evans/create-pull-request@v6
         with:
-          branch: ${{ github.head_ref }}  # Utilize github.head_ref para referenciar a branch da feature
+          branch: ${{ github.ref }}
           base: main
           title: "PR AUTOMATICO"
           committer: ${{ env.GIT_COMMIT_AUTHOR_NAME }} <${{ env.GIT_COMMIT_AUTHOR_EMAIL }}>
@@ -34,12 +34,8 @@ jobs:
 
       - name: PR url
         run: |
-          echo "Pull Request URL - ${{ steps.demo.outputs.pull-request-url }}"
-
-      - name: Show diff after PR
-        run: |
-          git fetch origin ${{ github.head_ref }}:${{ github.head_ref }}
-          git diff main ${{ github.head_ref }}
+          echo "Pull Request URL - ${{ steps.create_pr.outputs.pull-request-url }}"
+          echo "Deploying to production server on branch $GITHUB_REF"
 
 #      - name: Approve Pull Request
 #        run: |
