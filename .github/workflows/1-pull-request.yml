@@ -4,7 +4,7 @@ on:
   push:
     branches:
       - 'feature/**'
-
+permissions: write-all
 jobs:
   updateAuthor:
     runs-on: ubuntu-latest
