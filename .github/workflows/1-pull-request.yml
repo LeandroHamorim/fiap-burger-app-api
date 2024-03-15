@@ -5,7 +5,6 @@ on:
     branches:
       - main
 
-
 jobs:
   updateAuthor:
     runs-on: ubuntu-latest
@@ -23,7 +22,7 @@ jobs:
         id: demo
         uses: peter-evans/create-pull-request@v6
         with:
-          branch: "auto-pr-branch"
+          branch: ${{ github.ref }}
           base: main
           title: "PR AUTOMATICO"
           committer: ${{ env.GIT_COMMIT_AUTHOR_NAME }} <${{ env.GIT_COMMIT_AUTHOR_EMAIL }}">
@@ -31,24 +30,24 @@ jobs:
           body:
             This is to show automatic PR creation
           token: ${{ secrets.GITHUB_TOKEN }}
-          delete-branch: true
+          delete-branch: false
 
       - name: PR url
         run: |
           echo "Pull Request URL - ${{ steps.cpr.outputs.pull-request-url }}"
 
-      - name: Approve Pull Request
-        run: |
-          pr_url=$(echo "${{ steps.demo.outputs.pull-request-url }}")
-          pr_number=$(echo "$pr_url" | cut -d'/' -f7)
-          gh pr review --approve $pr_number
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+#      - name: Approve Pull Request
+#        run: |
+#          pr_url=$(echo "${{ steps.demo.outputs.pull-request-url }}")
+#          pr_number=$(echo "$pr_url" | cut -d'/' -f7)
+#          gh pr review --approve $pr_number
+#        env:
+#          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Merge Pull Request
-        uses: juliangruber/merge-pull-request-action@v1
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          number: ${{ steps.demo.outputs.pull_request_number }}
-          method: squash
-          repo: juliangruber/octokit-action
+#      - name: Merge Pull Request
+#        uses: juliangruber/merge-pull-request-action@v1
+#        with:
+#          github-token: ${{ secrets.GITHUB_TOKEN }}
+#          number: ${{ steps.demo.outputs.pull_request_number }}
+#          method: squash
+#          repo: juliangruber/octokit-action
