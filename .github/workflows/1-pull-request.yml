@@ -34,7 +34,12 @@ jobs:
 
       - name: PR url
         run: |
-          echo "Pull Request URL - ${{ steps.cpr.outputs.pull-request-url }}"
+          echo "Pull Request URL - ${{ steps.demo.outputs.pull-request-url }}"
+
+      - name: Show diff after PR
+        run: |
+          git fetch origin ${{ github.ref }}:${{ github.ref }}
+          git diff main ${{ github.ref }}
 
 #      - name: Approve Pull Request
 #        run: |
