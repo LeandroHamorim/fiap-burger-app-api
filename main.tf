@@ -2,11 +2,6 @@ provider "aws" {
   region = "us-east-1"
 }
 
-resource "aws_vpc" "my_vpc" {
-  cidr_block = "10.0.0.0/16"
-  id         = "vpc-0c9c3eae30dce3c6e"
-}
-
 resource "aws_eks_cluster" "my_cluster" {
   name     = "my-cluster"
   role_arn = "arn:aws:iam::730335333567:role/LabRole"
