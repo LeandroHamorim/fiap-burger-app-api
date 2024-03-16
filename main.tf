@@ -1,11 +1,21 @@
-provider "aws" {
-  region = "us-east-1" # Substitua pela região desejada
+# Providers:
+terraform {
+  required_version = ">= 0.12"
 }
 
-resource "aws_s3_bucket" "hello_world" {
-  bucket = "hello-world-acn-001" # Nome do bucket
+provider "aws" {
+  region = var.aws_region
+}
 
-  tags = {
-    Name = "Hello World Bucket"
-  }
+module "network" {
+  source = "./network"
+  aws_region = var.aws_region
+  cluster_name = var.cluster_name
+}
+
+module "eks" {
+  source = "./eks"
+  aws_region = var.aws_region
+  cluster_name = var.cluster_name
+  vpc_id = module.network.vpc_id
 }
