@@ -44,7 +44,7 @@ resource "aws_internet_gateway" "igw" {
   vpc_id = aws_vpc.main.id
 }
 
-# Anexa a gateway de internet ao VPC
+# Anexa a gateway de internet ao VPC -teste
 resource "aws_vpc_attachment" "igw_attachment" {
   vpc_id       = aws_vpc.main.id
   internet_gateway_id = aws_internet_gateway.igw.id
