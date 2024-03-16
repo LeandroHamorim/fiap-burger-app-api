@@ -1,22 +1,19 @@
 provider "aws" {
-  region = "us-west-1" # Defina sua região preferida
+  region = "us-east-1" # Substitua pela região desejada
 }
+
+#resource "aws_s3_bucket" "hello_world" {
+#  bucket = "hello-world" # Nome do bucket
+#  bucket = "hello-world-acn-001" # Nome do bucket
+#
+#  tags = {
+#    Name = "Hello World Bucket"
+#  }
+#}
 
 resource "aws_vpc" "my_vpc" {
   cidr_block = "10.0.0.0/16"
   id         = "vpc-0c9c3eae30dce3c6e"  # ID da sua VPC
-}
-
-resource "aws_subnet" "subnet_1" {
-  vpc_id            = aws_vpc.my_vpc.id
-  cidr_block        = "10.0.1.0/24"
-  availability_zone = "us-east-1a"
-}
-
-resource "aws_subnet" "subnet_2" {
-  vpc_id            = aws_vpc.my_vpc.id
-  cidr_block        = "10.0.2.0/24"
-  availability_zone = "us-east-1b"
 }
 
 resource "aws_eks_cluster" "my_cluster" {
@@ -26,8 +23,8 @@ resource "aws_eks_cluster" "my_cluster" {
 
   vpc_config {
     subnet_ids = [
-      aws_subnet.subnet_1.id,
-      aws_subnet.subnet_2.id
+      subnet-081d1613d89ee8ba6,
+      subnet-0b97e6916779e8ddb
     ]
   }
 }
