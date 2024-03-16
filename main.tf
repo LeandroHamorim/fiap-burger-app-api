@@ -3,7 +3,7 @@ provider "aws" {
 }
 
 resource "aws_s3_bucket" "hello_world" {
-  bucket = "hello-world" # Nome do bucket
+  bucket = "hello-world-acn-001" # Nome do bucket
 
   tags = {
     Name = "Hello World Bucket"
