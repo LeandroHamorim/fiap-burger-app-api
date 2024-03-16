@@ -2,10 +2,9 @@ provider "aws" {
   region = "us-east-1"
 }
 
-resource "aws_eks_cluster" "my_cluster" {
-  name     = "my-cluster"
+resource "aws_eks_cluster" "my_cluster_" {
+  name     = "my-cluster-acn-01"
   role_arn = "arn:aws:iam::730335333567:role/LabRole"
-  version  = "1.21"
 
   vpc_config {
     subnet_ids = [
