@@ -1,57 +1,33 @@
 provider "aws" {
-  region = "us-east-1"  # Altere para a região desejada
+  region = "us-west-1" # Defina sua região preferida
 }
 
-# Criação de um VPC
-resource "aws_vpc" "main" {
-  cidr_block = "10.0.0.0/16"  # CIDR do VPC
+resource "aws_vpc" "my_vpc" {
+  cidr_block = "10.0.0.0/16"
+  id         = "vpc-0c9c3eae30dce3c6e"  # ID da sua VPC
 }
 
-# Criação de sub-redes públicas
-resource "aws_subnet" "public" {
-  vpc_id            = aws_vpc.main.id
-  cidr_block        = "10.0.1.0/24"  # CIDR da sub-rede pública
-  map_public_ip_on_launch = true
+resource "aws_subnet" "subnet_1" {
+  vpc_id            = aws_vpc.my_vpc.id
+  cidr_block        = "10.0.1.0/24"
+  availability_zone = "us-east-1a"
 }
 
-# Criação de sub-redes privadas
-resource "aws_subnet" "private" {
-  vpc_id            = aws_vpc.main.id
-  cidr_block        = "10.0.2.0/24"  # CIDR da sub-rede privada
+resource "aws_subnet" "subnet_2" {
+  vpc_id            = aws_vpc.my_vpc.id
+  cidr_block        = "10.0.2.0/24"
+  availability_zone = "us-east-1b"
 }
 
-# Criação de um grupo de segurança para permitir tráfego de entrada apenas nas portas necessárias
-resource "aws_security_group" "eks_sg" {
-  vpc_id = aws_vpc.main.id
+resource "aws_eks_cluster" "my_cluster" {
+  name     = "my-cluster"
+  role_arn = "arn:aws:iam::730335333567:role/LabRole"
+  version  = "1.21"
 
-  ingress {
-    from_port   = 443  # HTTPS para comunicação com o EKS
-    to_port     = 443
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
+  vpc_config {
+    subnet_ids = [
+      aws_subnet.subnet_1.id,
+      aws_subnet.subnet_2.id
+    ]
   }
-
-  egress {
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-}
-
-# Criação de uma gateway de internet para permitir acesso à internet para instâncias na sub-rede pública
-resource "aws_internet_gateway" "igw" {
-  vpc_id = aws_vpc.main.id
-}
-
-# Anexa a gateway de internet ao VPC -teste
-resource "aws_vpc_attachment" "igw_attachment" {
-  vpc_id       = aws_vpc.main.id
-  internet_gateway_id = aws_internet_gateway.igw.id
-}
-
-# Associa a sub-rede pública à tabela de roteamento padrão
-resource "aws_route_table_association" "public_subnet_association" {
-  subnet_id      = aws_subnet.public.id
-  route_table_id = aws_vpc.main.main_route_table_id
 }
