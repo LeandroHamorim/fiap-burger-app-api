@@ -13,7 +13,7 @@ resource "aws_eks_cluster" "my_cluster_" {
     ]
   }
 
-    node_groups = {
+  node_groups = {
     default = {
       desired_capacity = 2
       max_capacity     = 3
