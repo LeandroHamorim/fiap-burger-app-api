@@ -21,6 +21,7 @@ resource "aws_eks_cluster" "my_cluster_" {
 
       instance_type = "m5.large"
     }
+  }
 }
 
 output "cluster_id" {
