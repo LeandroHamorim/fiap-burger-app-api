@@ -1,0 +1,75 @@
+apiVersion: v1
+kind: List
+items:
+  - apiVersion: v1
+    kind: ConfigMap
+    metadata:
+      name: constantes-configmap
+    data:
+      spring.datasource.url: "jdbc:postgresql://db-fiap-burger-svc:5432/postgres"
+      spring.datasource.driverClassName: "org.postgresql.Driver"
+      spring.datasource.plataform: "org.hibernate.dialect.PostgreSQLDialect"
+      spring.datasource.jpa.database-platform: "org.hibernate.dialect.PostgreSQLDialect"
+
+  - apiVersion: v1
+    kind: ConfigMap
+    metadata:
+      name: postgres-sql-configmap
+    data:
+    # Seus dados aqui
+
+  - apiVersion: v1
+    kind: Secret
+    metadata:
+      name: db-login-secrets
+    data:
+    # Seus dados aqui
+
+  - apiVersion: v1
+    kind: Service
+    metadata:
+      name: fiap-burger-svc
+    spec:
+    # Especificações do serviço aqui
+    dependsOn:
+      - name: constantes-configmap
+      - name: postgres-sql-configmap
+
+  - apiVersion: v1
+    kind: Service
+    metadata:
+      name: postgres-svc
+    spec:
+    # Especificações do serviço aqui
+    dependsOn:
+      - name: postgres-sql-configmap
+
+  - apiVersion: apps/v1
+    kind: Deployment
+    metadata:
+      name: postgres-deployment
+    spec:
+    # Especificações do deployment aqui
+    dependsOn:
+      - name: postgres-sql-configmap
+      - name: db-login-secrets
+      - name: postgres-svc
+
+  - apiVersion: apps/v1
+    kind: Deployment
+    metadata:
+      name: fiap-burger-deployment
+    spec:
+    # Especificações do deployment aqui
+    dependsOn:
+      - name: constantes-configmap
+      - name: fiap-burger-svc
+
+  - apiVersion: autoscaling/v1
+    kind: HorizontalPodAutoscaler
+    metadata:
+      name: fiap-burger-hpa
+    spec:
+    # Especificações do HPA aqui
+    dependsOn:
+      - name: fiap-burger-deployment

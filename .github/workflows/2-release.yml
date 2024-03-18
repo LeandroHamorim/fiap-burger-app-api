@@ -1,42 +1,43 @@
-name: '2 - [feat] Build & Pull Request'
+name: Deploy to EKS
 
 on:
   push:
     branches:
       - main
+
 jobs:
-  terraform:
-    name: Terraform Apply
+  deploy:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout code
+      - name: Checkout repository
         uses: actions/checkout@v2
 
-#      - name: Setup Terraform
-#        uses: hashicorp/setup-terraform@v2
-#        with:
-#          cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-session_token: ${{ secrets.AWS_SESSION_TOKEN }}
+          aws-region: us-west-1
 
-      - name: Terraform Format
-        id: fmt
-        run: terraform fmt -check
 
-      - name: Terraform Init
-        id: init
-        run: terraform init
+      - name: Install kubectl
+        uses: azure/kubectl@v1
+        with:
+          version: latest
 
-      - name: Terraform Validate
-        id: validate
-        run: terraform validate -no-color
+      - name: Configure kubeconfig for EKS cluster
+        run: |
+          aws eks update-kubeconfig --name fiap-burger-eks-cluster --region us-west-1
 
-      - name: Terraform Plan
-        id: plan
-        run: terraform plan -no-color -input=false
-        continue-on-error: true
-
-      - name: Terraform Apply
-        run: terraform apply -auto-approve -input=false
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_SESSION_TOKEN: ${{ secrets.AWS_SESSION_TOKEN }}
+      - name: Deploy resources
+        run: |
+          kubectl apply -f kubernetes/constantes.configmap.yaml
+          kubectl apply -f kubernetes/postgres-sql.configmap.yaml
+          kubectl apply -f kubernetes/db-login.secrets.yaml
+          kubectl apply -f kubernetes/fiap-burger.svc.yaml
+          kubectl apply -f kubernetes/postgres.svc.yaml
+          kubectl apply -f kubernetes/postgres.deployment.yaml
+          kubectl apply -f kubernetes/fiap-burger.deployment.yaml
+          kubectl apply -f kubernetes/fiap-burger.hpa.yaml
