@@ -23,9 +23,8 @@ jobs:
 
 
       - name: Install kubectl
-        uses: azure/kubectl@v1
-        with:
-          version: latest
+        run: |
+          sudo apt-get update && sudo apt-get install -y kubectl 
 
       - name: Configure kubeconfig for EKS cluster
         run: |
