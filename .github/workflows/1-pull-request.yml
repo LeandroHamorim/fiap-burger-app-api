@@ -1,4 +1,4 @@
-name: Demo to create automatic PR
+name: Automatic PR
 
 on:
   push:
@@ -8,7 +8,7 @@ permissions:
   pull-requests: write
 
 jobs:
-  updateAuthor:
+  open_pull_request:
     runs-on: ubuntu-latest
     steps:
       - name: checking out code
