@@ -21,6 +21,8 @@ Este projeto faz parte de um sistema de autoatendimento de fast food desenvolvid
 - **Banco de Dados**: PostgreSQL
 - **ORM**: Hibernate
 
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=LeandroHamorim_fiap-burger-app-api&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=LeandroHamorim_fiap-burger-app-api)
+
 ## Como Rodar o Projeto com docker
 
 1. **Pré-requisitos**:

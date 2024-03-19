@@ -13,13 +13,16 @@ jobs:
     steps:
       - name: checking out code
         uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
 
-      - name: extract git commit data
-        uses: rlespinasse/git-commit-data-action@v1.x
+      - name: Set up JDK 17
+        uses: actions/setup-java@v2
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+          overwrite-settings: false
 
-      - name: Update author information
-        run: echo ${{ env.GIT_COMMIT_AUTHOR_NAME }} > AUTHOR
-        
       - name: Cache Maven packages
         uses: actions/cache@v1
         with:
@@ -33,12 +36,18 @@ jobs:
           path: ~/.sonar/cache
           key: ${{ runner.os }}-sonar
           restore-keys: ${{ runner.os }}-sonar
-
+          
       - name: Build and analyze
-        run: mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Pcoverage
         env:
           GITHUB_TOKEN: ${{ secrets.GIT_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=LeandroHamorim_fiap-burger-app-api
+      
+      - name: extract git commit data
+        uses: rlespinasse/git-commit-data-action@v1.x
+  
+      - name: Update author information
+        run: echo ${{ env.GIT_COMMIT_AUTHOR_NAME }} > AUTHOR      
 
       - name: Raise PR
         id: create_pr
